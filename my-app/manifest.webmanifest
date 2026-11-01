@@ -1,0 +1,19 @@
+{
+  "name": "4H Tracker",
+  "short_name": "4H Tracker",
+  "description": "An offline classroom heat-index guide.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff4e5",
+  "theme_color": "#b94716",
+  "icons": [
+    {
+      "src": "./thermometer.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

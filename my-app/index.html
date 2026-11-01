@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#b94716">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; worker-src 'self'; manifest-src 'self'"
+    >
+    <meta
+      name="description"
+      content="Check classroom heat conditions with the 4H heat index guide. Works offline after the first visit."
+    >
+    <title>4H Tracker</title>
+    <link rel="icon" href="./thermometer.svg" type="image/svg+xml">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="masthead">
+        <img class="brand-icon" src="./thermometer.svg" alt="" width="56" height="56">
+        <div>
+          <p class="eyebrow">Classroom heat guide</p>
+          <h1>4H Tracker</h1>
+        </div>
+      </header>
+
+      <p class="intro">Check the heat index. Get a clear school-day guide.</p>
+
+      <section class="instructions panel" aria-labelledby="instructions-heading">
+        <h2 id="instructions-heading">How to use this guide</h2>
+        <ol class="steps">
+          <li>
+            <strong>Measure the classroom.</strong> Use an indoor thermometer for
+            temperature and a humidity meter for relative humidity. Follow the
+            device instructions and let it settle in the occupied area, away
+            from direct sun, windows, fans, air conditioners, and hot equipment.
+            The linked DepEd guidance describes readings at 8 a.m., noon, and
+            2 p.m.; follow your school’s current instructions.
+          </li>
+          <li>
+            <strong>Enter the measured values.</strong> Temperature is in °C and
+            humidity is in %. Add an optional room name, then tap
+            <strong>Get decision</strong>.
+          </li>
+          <li>
+            <strong>Save what you need.</strong> Save each result to this
+            device’s history. Export the history to CSV for a spreadsheet or
+            delete it when it is no longer needed.
+          </li>
+          <li>
+            <strong>Use the result with local guidance.</strong> Check learners
+            and classroom conditions; this tool supports decisions and does not
+            replace school or official guidance.
+          </li>
+        </ol>
+        <p class="reading-note">
+          <strong>No thermometer or humidity meter?</strong> A weather app may
+          show current outdoor conditions near you, but those are not classroom
+          readings. Offline weather data may also be old. Do not enter outdoor
+          values or guesses as room measurements. Ask your school to provide
+          or lend an indoor thermometer and humidity meter. Until you can
+          measure the room, follow your school’s and local authorities’ guidance.
+        </p>
+      </section>
+
+      <section class="panel" aria-labelledby="measure-heading">
+        <h2 id="measure-heading">Enter room readings</h2>
+        <p class="hint">Enter actual classroom measurements, not estimates.</p>
+
+        <form id="heat-form" novalidate>
+          <div class="field">
+            <label for="room-name">Classroom or room (optional)</label>
+            <input
+              id="room-name"
+              name="roomName"
+              type="text"
+              maxlength="60"
+              placeholder="ex: Room 4"
+              autocomplete="off"
+            >
+          </div>
+
+          <div class="field">
+            <label for="temperature">Temperature (°C)</label>
+            <input
+              id="temperature"
+              name="temperature"
+              type="number"
+              inputmode="decimal"
+              step="any"
+              placeholder="ex: 32"
+              autocomplete="off"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="humidity">Humidity (%)</label>
+            <input
+              id="humidity"
+              name="humidity"
+              type="number"
+              inputmode="decimal"
+              min="0"
+              max="100"
+              step="any"
+              placeholder="ex: 65"
+              autocomplete="off"
+              required
+            >
+          </div>
+
+          <p id="form-message" class="message" role="alert" hidden></p>
+
+          <div class="form-actions">
+            <button class="button button-primary" type="submit">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <path d="M4 12h13m-5-5 5 5-5 5M4 5v14"></path>
+              </svg>
+              Get decision
+            </button>
+            <button id="clear-button" class="button button-secondary" type="button">
+              Clear readings
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section id="decision" class="decision" aria-live="polite" aria-atomic="true" hidden>
+        <div class="decision-heading">
+          <p class="eyebrow">Your heat index</p>
+          <p id="heat-index" class="heat-index"></p>
+        </div>
+        <div id="level-card" class="level-card">
+          <p id="level-name" class="level-name"></p>
+          <p id="level-detail" class="level-detail"></p>
+        </div>
+        <div class="decision-actions">
+          <button id="save-button" class="button button-primary" type="button" hidden>
+            Save reading
+          </button>
+          <button id="speak-button" class="button button-secondary" type="button" hidden>
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M4 9v6h4l5 4V5L8 9H4Zm12-1a6 6 0 0 1 0 8m2-11a10 10 0 0 1 0 14"></path>
+            </svg>
+            Read decision
+          </button>
+        </div>
+        <p class="hint">The short spoken alert uses a voice available on this device.</p>
+        <p class="hint">This guide supports local decisions. Check learners and room conditions.</p>
+      </section>
+
+      <section class="history panel" aria-labelledby="history-heading">
+        <div class="history-header">
+          <div>
+            <h2 id="history-heading">Saved readings</h2>
+            <p class="hint">Saved only in this browser on this device; not synced or backed up.</p>
+          </div>
+          <div class="history-actions">
+            <button id="export-button" class="button button-secondary" type="button" disabled>
+              Export CSV
+            </button>
+            <button id="delete-history-button" class="button button-secondary" type="button" disabled>
+              Delete all
+            </button>
+          </div>
+        </div>
+        <p id="history-status" class="history-status" role="status" aria-live="polite"></p>
+        <ol id="saved-readings" class="saved-readings"></ol>
+      </section>
+
+      <details class="guide">
+        <summary>See the 4H guide</summary>
+        <ul>
+          <li><strong>Hayo:</strong> Below 27°C. Regular classes; take water breaks.</li>
+          <li><strong>Hinay:</strong> 27°C to below 33°C. Consider shorter or flexible classes.</li>
+          <li><strong>Hinga:</strong> 33°C to below 42°C. Stop in-person classes; use lighter home tasks.</li>
+          <li><strong>Hinto:</strong> 42°C or higher. Stop school and home learning activities.</li>
+        </ul>
+      </details>
+
+      <section class="privacy panel" aria-labelledby="privacy-heading">
+        <h2 id="privacy-heading">Your privacy</h2>
+        <p>This app does not send readings to a server.</p>
+        <p>Readings stay on this screen unless you choose <strong>Save reading</strong>. Saved readings are stored only in this browser on this device and may be removed by clearing browser data or uninstalling the app.</p>
+        <p class="hint">Use Export CSV if you need a separate copy. Treat exported files as sensitive and store them securely.</p>
+      </section>
+
+      <footer class="footer">
+        <p id="offline-status" role="status">Checking offline support…</p>
+        <p>Policy guide: <a href="https://www.deped.gov.ph/2026/10/26/paghahanda-sa-halip-na-panic-deped-naglabas-ng-mga-hakbang-laban-sa-super-el-nino/" rel="noreferrer">DepEd 4H guidance</a>.</p>
+        <p>Heat index is an estimate using the NOAA/NWS Rothfusz method. The linked DepEd guidance provides the 4H cutoffs but does not specify this equation. Readings below 27°C or below 40% humidity are outside this guide.</p>
+      </footer>
+    </main>
+  </body>
+</html>
